@@ -1,0 +1,115 @@
+body {
+    background-color: #eee;
+}
+
+#app {
+    display: flex;
+}
+
+#app div {
+    flex-grow: 1;
+    background-color: #fff;
+    margin: 5px;
+    margin-top: 0px;
+}
+
+#meals {
+    margin-left: 0px;
+}
+
+#orders {
+    margin-right: 0px;
+}
+
+ul {
+    list-style: none;
+}
+
+.btns {
+    color: #fff;
+    padding: 10px 15px;
+    border: solid 0px;
+    border-radius: 25px;
+    margin: 15px;
+}
+
+#submit {
+    background-color: #2a91bd;
+    margin-left: 30px;
+}
+#submit:disabled {
+    background-color: #ccc;
+}
+
+#delete {
+    background-color: rgb(173, 4, 4);
+    margin-left: 30px;
+}
+#delete:disabled {
+    background-color: #ccc;
+}
+
+#logout {
+    background-color: gray;
+    margin: auto;
+	position: fixed;
+	right: 20px;
+	bottom: 20px;
+}
+
+#meals-list li{
+    cursor: pointer;
+}
+#orders-list li{
+    cursor: pointer;
+}
+
+.selected {
+    background-color: #eee;
+}
+
+/*  Formulario inicio sesion */
+#app .form-main {
+    max-width: 300px;
+    margin: 0 auto;
+    margin-top: 100px;
+    margin-bottom: 150px;
+    padding: 15px;    
+    padding-bottom: 30px;
+    font-family: "Calibri";
+}
+
+.login-form p {
+    margin-bottom: 5px;
+    font-size: 14px;   
+	font-style: italic; 
+}
+
+form input {
+    width: calc(100% - 10px);	/* calc() permite calcular medidas en tiempo real */
+    height: 30px;
+    padding-left: 5px;
+    background-color: #dedede;
+    border: solid 0px;
+    border-radius: 4px;
+    color: #555;
+}
+
+.form-tittle {
+    text-align: center;
+    font-size: 24px;
+}
+
+.btn {
+    background-color: #2a91bd;
+    color: #fff;
+    padding: 10px 15px;
+    border: solid 0px;
+    border-radius: 4px;
+    margin-top: 25px;
+}
+
+.block {
+    width: calc(100% - 4px);
+}
+
