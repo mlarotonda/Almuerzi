@@ -23,12 +23,13 @@ router.post('/', isAuthenticated,  (req, res) => {
 })
 
 router.put('/:id', isAuthenticated, /*hasRoles(['admin', 'user']),*/ (req, res) => {    //con lo comentado indicas q usuarios pueden acceder a la ruta
-    Orders.findOneAndUpdate(req.params.id, req.body)
+    Orders.findByIdAndUpdate(req.params.id, req.body)
         .then(() => res.sendStatus(204))
 })
 
-router.delete('/:id', isAuthenticated, (req, res) => {
-    Orders.findOneAndDelete(req.params.id)
+router.delete('/:id'/*, isAuthenticated*/, (req, res) => {
+    Orders.findByIdAndDelete(req.params.id)
+        .exec()
         .then(() => res.sendStatus(204))
 })
 

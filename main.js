@@ -12,16 +12,27 @@ const stringToHTML = (s) => {   //funcion para transormar string a HTML
 
 const renderItem = (item) => {  
     const element = stringToHTML(`<li data-id="${item._id}">${item.name}</li>`) //template string con ``
-    
+
     element.addEventListener('click', () => {   //escuchador de eventos al hacer click
         const mealsList = document.getElementById('meals-list')
-        const ordersList = document.getElementById('orders-list')
         Array.from(mealsList.children).forEach(x => x.classList.remove('selected'))
-        Array.from(ordersList.children).forEach(x => x.classList.remove('selected'))
         element.classList.add('selected')   //agrega una clase al html
         const mealsIdInput = document.getElementById('meals-id')
-        const ordersIdInput = document.getElementById('orders-id')
         mealsIdInput.value = item._id
+    })
+
+    return element
+}
+
+const renderItemOrder = (item) => {  
+    const element = stringToHTML(`<li data-id="${item._id}">${item.name} - ${item.user_id}</li>`) //template string con ``
+    //const element = item
+
+    element.addEventListener('click', () => {   //escuchador de eventos al hacer click
+        const ordersList = document.getElementById('orders-list')
+        Array.from(ordersList.children).forEach(x => x.classList.remove('selected'))
+        element.classList.add('selected')   //agrega una clase al html
+        const ordersIdInput = document.getElementById('orders-id')
         ordersIdInput.value = item._id
     })
 
@@ -31,40 +42,26 @@ const renderItem = (item) => {
 const renderOrder = (order, meals) => {
     const meal = meals.find(meal => meal._id === order.meal_id)  //find() sirve para buscar un metodo en un arreglo, recibe un elemento de meal (meal), recorre hasta q encuentre un elemento o se termine
     const element = stringToHTML(`<li data-id="${order._id}">${meal.name} - ${order.user_id}</li>`) 
-
     return element
 }
 
-
 const inicializaFormulario = () => {
     const orderForm = document.getElementById('order')
+    const ordersForm = document.getElementById('orders')
+
     orderForm.onsubmit = (e) => {
         e.preventDefault()
         const submit = document.getElementById('submit')
-        const del = document.getElementById('delete')
         submit.setAttribute('disabled', true)
-        //del.setAttribute('disabled', true)
         const mealId = document.getElementById('meals-id')
-        const orderId = document.getElementById('orders-id')
         const mealIdValue = mealId.value
-        const orderIdValue = orderId.value
         if (!mealIdValue) {
             alert('Debe seleccionar un plato')
             submit.removeAttribute('disabled')
             return
         }
-        if (!orderIdValue) {
-            alert('Debe seleccionar un plato')
-            del.removeAttribute('disabled')
-            return
-        }
-
         const order = {
             meal_id: mealIdValue,
-            user_id: 'canchito'
-        }
-        const orders = {
-            order_id: orderIdValue,
             user_id: 'canchito'
         }
 
@@ -81,23 +78,31 @@ const inicializaFormulario = () => {
             const ordersList = document.getElementById('orders-list')
             ordersList.appendChild(renderedOrder)
             submit.removeAttribute('disabled')
-            del.removeAttribute('disabled')
         })
+    }
 
-        fetch('https://serverless-mlarotonda.vercel.app/api/orders', {
+    ordersForm.onsubmit = (d) => {
+        d.preventDefault()
+        const remove = document.getElementById('delete')
+        remove.setAttribute('disabled', true)
+        const orderId = document.getElementById('orders-id')
+        const orderIdValue = orderId.value
+        if (!orderIdValue) {
+            alert('Debe seleccionar una orden')
+            remove.removeAttribute('disabled')
+            return
+        }
+        fetch('https://serverless-mlarotonda.vercel.app/api/orders/' + orderIdValue, {
             method: 'DELETE', //se indica el metodo porque el por defecto es get
             headers: {
                 'Content-Type': 'application/json',
                 authorization: token,
-            },
-            body: JSON.stringify(orders)  //body no recibe objetos de js sino q recibe string
-        }).then(x => x.json())
-        .then(respuesta => {
-            const renderedOrder = renderOrder(respuesta, mealsState)
+            }
+        }).then(respuesta => {
+            const renderedOrder = renderOrder(respuesta, ordersState)
             const ordersList = document.getElementById('orders-list')
-            ordersList.appendChild(renderedOrder)
-            submit.removeAttribute('disabled')
-            del.removeAttribute('disabled')
+            ordersList.remove(renderedOrder)
+            remove.removeAttribute('disabled')
         })
     }
 }
@@ -109,42 +114,25 @@ const inicializaDatos = () => {
             mealsState = data
             const mealsList = document.getElementById('meals-list')  
             const submit = document.getElementById('submit')
+            const remove = document.getElementById('delete')
             const listItems = data.map(renderItem)
             mealsList.removeChild(mealsList.firstElementChild)
             listItems.forEach (element => mealsList.appendChild(element)) //iterar en la lista de items y va agregando
             submit.removeAttribute('disabled')
+            remove.removeAttribute('disabled')
             fetch('https://serverless-mlarotonda.vercel.app/api/orders')
-            .then(response => response.json())
-            .then(ordersData => {
-                const ordersList = document.getElementById('orders-list')
-                const listOrders = ordersData.map(orderData => renderOrder(orderData, data))
-
-                ordersList.removeChild(ordersList.firstElementChild)
-                listOrders.forEach(element => ordersList.appendChild(element))
-            })
-    })
-    fetch('https://serverless-mlarotonda.vercel.app/api/orders') //fetch permite llamar rutas o url e interpretar lo q devuelve
-        .then(response => response.json())  //siempre tiene que ir el response
-        .then(data => {
-            ordersState = data
-            const ordersList = document.getElementById('orders-list')  
-            const del = document.getElementById('delete')
-            const listItems = data.map(renderItem)
-            //ordersList.removeChild(ordersList.firstElementChild)
-            //listItems.forEach (element => ordersList.appendChild(element)) //iterar en la lista de items y va agregando
-            del.removeAttribute('disabled')
-            fetch('https://serverless-mlarotonda.vercel.app/api/orders')
-            .then(response => response.json())
-            .then(ordersData => {
-                const ordersList = document.getElementById('orders-list')
-                //const listOrders = ordersData.map(orderData => renderOrder(orderData, data))
-                const listOrders = ordersData.map(orderData => renderOrder(orderData, data))
-
-
-                ordersList.removeChild(ordersList.firstElementChild)
-                listOrders.forEach(element => ordersList.appendChild(element))
-            })
-    })
+                .then(response => response.json())
+                .then(ordersData => {
+                    ordersState = ordersData
+                    const ordersList = document.getElementById('orders-list')
+                    const listOrders = ordersData.map(orderData => renderOrder(orderData, data))
+                    ordersList.removeChild(ordersList.firstElementChild)
+                    listOrders.forEach(element => ordersList.appendChild(element))
+                    
+                    const listItemOrders = ordersData.map(renderItemOrder)
+                    listItemOrders.forEach(element => ordersList.appendChild(element))
+                })
+        })
 }
 
 const renderApp = () => {
