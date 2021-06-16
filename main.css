@@ -31,6 +31,7 @@ ul {
     border: solid 0px;
     border-radius: 25px;
     margin: 15px;
+    cursor: pointer;
 }
 
 #submit {
@@ -107,6 +108,7 @@ form input {
     border: solid 0px;
     border-radius: 4px;
     margin-top: 25px;
+    cursor: pointer;
 }
 
 .block {
