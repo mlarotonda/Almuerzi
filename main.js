@@ -24,30 +24,38 @@ const renderItem = (item) => {
     return element
 }
 
-const renderItemOrder = (item) => {  
-    const element = stringToHTML(`<li data-id="${item._id}">${item.name} - ${item.user_id}</li>`) //template string con ``
-    //const element = item
+const renderOrder = (order, meals) => {
+    const meal = meals.find(meal => meal._id === order.meal_id)  //find() sirve para buscar un metodo en un arreglo, recibe un elemento de meal (meal), recorre hasta q encuentre un elemento o se termine
+    const element = stringToHTML(`<li data-id="${order._id}">${meal.name} - ${order.user_id}</li>`) 
 
     element.addEventListener('click', () => {   //escuchador de eventos al hacer click
         const ordersList = document.getElementById('orders-list')
         Array.from(ordersList.children).forEach(x => x.classList.remove('selected'))
         element.classList.add('selected')   //agrega una clase al html
         const ordersIdInput = document.getElementById('orders-id')
-        ordersIdInput.value = item._id
+        ordersIdInput.value = order._id
     })
 
     return element
 }
 
-const renderOrder = (order, meals) => {
-    const meal = meals.find(meal => meal._id === order.meal_id)  //find() sirve para buscar un metodo en un arreglo, recibe un elemento de meal (meal), recorre hasta q encuentre un elemento o se termine
-    const element = stringToHTML(`<li data-id="${order._id}">${meal.name} - ${order.user_id}</li>`) 
-    return element
+const removeSelectedFromChildrens = (item) => {
+    const element = document.getElementById(item)
+    Array.from(element.children).forEach(x => x.classList.remove('selected'))
+}
+
+const renderOrdersAfterDelete = (orderId, orders, meals) => {
+    const elemento = document.querySelectorAll(`[data-id="${orderId}"]`)
+    //const orderElement = orders.find(order => order._id === orderId)  //find() sirve para buscar un metodo en un arreglo, recibe un elemento de meal (meal), recorre hasta q encuentre un elemento o se termine
+    //const meal = meals.find(meal => meal._id === orderElement.meal_id)
+    //const element = stringToHTML(`<li data-id="${orderId}" class="selected">${meal.name} - ${orderElement.user_id}</li>`) 
+    return elemento
 }
 
 const inicializaFormulario = () => {
     const orderForm = document.getElementById('order')
     const ordersForm = document.getElementById('orders')
+    const logOut = document.getElementById('logout')
 
     orderForm.onsubmit = (e) => {
         e.preventDefault()
@@ -74,10 +82,12 @@ const inicializaFormulario = () => {
             body: JSON.stringify(order)  //body no recibe objetos de js sino q recibe string
         }).then(x => x.json())
         .then(respuesta => {
+            ordersState.push(respuesta)
             const renderedOrder = renderOrder(respuesta, mealsState)
             const ordersList = document.getElementById('orders-list')
             ordersList.appendChild(renderedOrder)
             submit.removeAttribute('disabled')
+            removeSelectedFromChildrens('meals-list')
         })
     }
 
@@ -93,17 +103,21 @@ const inicializaFormulario = () => {
             return
         }
         fetch('https://serverless-mlarotonda.vercel.app/api/orders/' + orderIdValue, {
-            method: 'DELETE', //se indica el metodo porque el por defecto es get
+            method: 'DELETE', 
             headers: {
                 'Content-Type': 'application/json',
                 authorization: token,
             }
-        }).then(respuesta => {
-            const renderedOrder = renderOrder(respuesta, ordersState)
-            const ordersList = document.getElementById('orders-list')
-            ordersList.remove(renderedOrder)
-            remove.removeAttribute('disabled')
         })
+        const renderedOrder = renderOrdersAfterDelete(orderIdValue, ordersState, mealsState)
+        renderedOrder[0].parentNode.removeChild(renderedOrder[0])
+        remove.removeAttribute('disabled') 
+        removeSelectedFromChildrens('orders-list')
+    }
+
+    logOut.onclick = () => {
+        localStorage.removeItem('token')
+        renderApp()
     }
 }
 
@@ -128,9 +142,6 @@ const inicializaDatos = () => {
                     const listOrders = ordersData.map(orderData => renderOrder(orderData, data))
                     ordersList.removeChild(ordersList.firstElementChild)
                     listOrders.forEach(element => ordersList.appendChild(element))
-                    
-                    const listItemOrders = ordersData.map(renderItemOrder)
-                    listItemOrders.forEach(element => ordersList.appendChild(element))
                 })
         })
 }
@@ -182,7 +193,9 @@ const renderLogin = () => {
             })
             .then(x => x.json())
             .then(user => console.log(user))
+            .then(() => renderApp())
     }
+    
 }
 
 window.onload = () => {
