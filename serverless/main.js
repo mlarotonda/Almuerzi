@@ -46,9 +46,6 @@ const removeSelectedFromChildrens = (item) => {
 
 const renderOrdersAfterDelete = (orderId, orders, meals) => {
     const elemento = document.querySelectorAll(`[data-id="${orderId}"]`)
-    //const orderElement = orders.find(order => order._id === orderId)  //find() sirve para buscar un metodo en un arreglo, recibe un elemento de meal (meal), recorre hasta q encuentre un elemento o se termine
-    //const meal = meals.find(meal => meal._id === orderElement.meal_id)
-    //const element = stringToHTML(`<li data-id="${orderId}" class="selected">${meal.name} - ${orderElement.user_id}</li>`) 
     return elemento
 }
 
@@ -88,6 +85,7 @@ const inicializaFormulario = () => {
             ordersList.appendChild(renderedOrder)
             submit.removeAttribute('disabled')
             removeSelectedFromChildrens('meals-list')
+            mealId.removeAttribute('value') 
         })
     }
 
@@ -108,11 +106,12 @@ const inicializaFormulario = () => {
                 'Content-Type': 'application/json',
                 authorization: token,
             }
+        }).then(() => {
+            const renderedOrder = renderOrdersAfterDelete(orderIdValue, ordersState, mealsState)
+            renderedOrder[0].parentNode.removeChild(renderedOrder[0])
+            remove.removeAttribute('disabled') 
+            orderId.removeAttribute('value') 
         })
-        const renderedOrder = renderOrdersAfterDelete(orderIdValue, ordersState, mealsState)
-        renderedOrder[0].parentNode.removeChild(renderedOrder[0])
-        remove.removeAttribute('disabled') 
-        removeSelectedFromChildrens('orders-list')
     }
 
     logOut.onclick = () => {
@@ -192,8 +191,11 @@ const renderLogin = () => {
                 })
             })
             .then(x => x.json())
-            .then(user => console.log(user))
-            .then(() => renderApp())
+            .then(user => {
+                console.log(user)
+                renderApp()
+                token = localStorage.getItem('token')
+            })
     }
     
 }
