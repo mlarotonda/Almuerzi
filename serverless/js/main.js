@@ -2,7 +2,7 @@ let mealsState = []
 let ordersState = []
 let ruta = 'login' //login, register, orders
 
-const token = localStorage.getItem('token')
+const getToken = () => { return localStorage.getItem('token') }
 
 const stringToHTML = (s) => {   //funcion para transormar string a HTML
     const parser = new DOMParser()
@@ -12,7 +12,6 @@ const stringToHTML = (s) => {   //funcion para transormar string a HTML
 
 const renderItem = (item) => {  
     const element = stringToHTML(`<li data-id="${item._id}">${item.name}</li>`) //template string con ``
-
     element.addEventListener('click', () => {   //escuchador de eventos al hacer click
         const mealsList = document.getElementById('meals-list')
         Array.from(mealsList.children).forEach(x => x.classList.remove('selected'))
@@ -20,7 +19,6 @@ const renderItem = (item) => {
         const mealsIdInput = document.getElementById('meals-id')
         mealsIdInput.value = item._id
     })
-
     return element
 }
 
@@ -44,7 +42,7 @@ const removeSelectedFromChildrens = (item) => {
     Array.from(element.children).forEach(x => x.classList.remove('selected'))
 }
 
-const renderOrdersAfterDelete = (orderId, orders, meals) => {
+const selectedOrder = (orderId) => {
     const elemento = document.querySelectorAll(`[data-id="${orderId}"]`)
     return elemento
 }
@@ -74,7 +72,7 @@ const inicializaFormulario = () => {
             method: 'POST', //se indica el metodo porque el por defecto es get
             headers: {
                 'Content-Type': 'application/json',
-                authorization: token,
+                authorization: getToken(),
             },
             body: JSON.stringify(order)  //body no recibe objetos de js sino q recibe string
         }).then(x => x.json())
@@ -104,10 +102,10 @@ const inicializaFormulario = () => {
             method: 'DELETE', 
             headers: {
                 'Content-Type': 'application/json',
-                authorization: token,
+                authorization: getToken(),
             }
         }).then(() => {
-            const renderedOrder = renderOrdersAfterDelete(orderIdValue, ordersState, mealsState)
+            const renderedOrder = selectedOrder(orderIdValue)
             renderedOrder[0].parentNode.removeChild(renderedOrder[0])
             remove.removeAttribute('disabled') 
             orderId.removeAttribute('value') 
@@ -194,7 +192,6 @@ const renderLogin = () => {
             .then(user => {
                 console.log(user)
                 renderApp()
-                token = localStorage.getItem('token')
             })
     }
     
