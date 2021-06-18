@@ -4,7 +4,7 @@ let ruta = 'login' //login, register, orders
 
 const getToken = () => { return localStorage.getItem('token') }
 
-const stringToHTML = (s) => {   //funcion para transormar string a HTML
+const stringToHTML = (s) => {  
     const parser = new DOMParser()
     const doc = parser.parseFromString(s, 'text/html')
     return doc.body.firstChild
@@ -25,7 +25,6 @@ const renderItem = (item) => {
 const renderOrder = (order, meals) => {
     const meal = meals.find(meal => meal._id === order.meal_id)  //find() sirve para buscar un metodo en un arreglo, recibe un elemento de meal (meal), recorre hasta q encuentre un elemento o se termine
     const element = stringToHTML(`<li data-id="${order._id}">${meal.name} - ${order.user_id}</li>`) 
-
     element.addEventListener('click', () => {   //escuchador de eventos al hacer click
         const ordersList = document.getElementById('orders-list')
         Array.from(ordersList.children).forEach(x => x.classList.remove('selected'))
@@ -33,7 +32,6 @@ const renderOrder = (order, meals) => {
         const ordersIdInput = document.getElementById('orders-id')
         ordersIdInput.value = order._id
     })
-
     return element
 }
 
@@ -123,14 +121,12 @@ const inicializaDatos = () => {
         .then(response => response.json())  //siempre tiene que ir el response
         .then(data => {
             mealsState = data
+            document.getElementById('submit').removeAttribute('disabled')
+            document.getElementById('delete').removeAttribute('disabled')
             const mealsList = document.getElementById('meals-list')  
-            const submit = document.getElementById('submit')
-            const remove = document.getElementById('delete')
             const listItems = data.map(renderItem)
             mealsList.removeChild(mealsList.firstElementChild)
             listItems.forEach (element => mealsList.appendChild(element)) //iterar en la lista de items y va agregando
-            submit.removeAttribute('disabled')
-            remove.removeAttribute('disabled')
             fetch('https://serverless-mlarotonda.vercel.app/api/orders')
                 .then(response => response.json())
                 .then(ordersData => {
@@ -144,10 +140,8 @@ const inicializaDatos = () => {
 }
 
 const renderApp = () => {
-    const token = localStorage.getItem('token')
-    if(token) {
-        return renderOrders();
-    }
+    const token = getToken()
+    if(token) { return renderOrders(); }
     renderLogin()
 }
 
@@ -175,9 +169,14 @@ const renderLogin = () => {
             body: JSON.stringify({ email, password})  
         })  .then(x => x.json())
             .then(respuesta => {
-                localStorage.setItem('token', respuesta.token)  //guardando en localStorage podemos saber si cuando refrescamos la app si el usuario inicio sesion o no
-                ruta = 'orders'
-                return respuesta.token
+                if(respuesta.token){
+                    localStorage.setItem('token', respuesta.token)  //guardando en localStorage podemos saber si cuando refrescamos la app si el usuario inicio sesion o no
+                    ruta = 'orders'
+                    return respuesta.token
+                } else {
+                    console.log(respuesta.errorMessage)
+                    document.getElementById('errorMessage').innerHTML = respuesta.errorMessage
+                }
             })
             .then(token => {    
                 return fetch('https://serverless-mlarotonda.vercel.app/api/auth/me', {

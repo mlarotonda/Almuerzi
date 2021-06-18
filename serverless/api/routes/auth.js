@@ -40,7 +40,9 @@ router.post('/login', (req, res) => {
     Users.findOne({email}).exec()
         .then(user => {
             if(!user){
-                return res.send('usuario y/o password incorrecta')
+                return res.send(`{
+                    "errorMessage": "Usuario inexistente"
+                }`)
             }
             crypto.pbkdf2(password, user.salt, 10000, 64, 'sha1', (err,key) => {
                 const encryptedPassword = key.toString('base64')
@@ -48,7 +50,9 @@ router.post('/login', (req, res) => {
                     const token = signToken(user._id)   //toma el user._id y lo va a encriptar para luego devolverlo al usuario
                     return res.send({token})
                 }
-                return res.send('usuario y/o password incorrecta')
+                return res.send(`{
+                    "errorMessage": "Contraseña incorrecta"
+                }`)
             })
         })
 })

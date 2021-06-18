@@ -1,4 +1,4 @@
-.login-form p {
+.login-form #input-text {
     margin-bottom: 5px;
     font-size: 14px;   
 	font-style: italic; 
@@ -19,7 +19,9 @@ form input {
 
 .form-tittle {
     text-align: center;
-    font-size: 24px;
+    text-shadow: 1px 1px 1px rgba(0 ,0, 0, 0.5);	
+    font-size: 26px;
+    font-weight: bold;
 }
 
 .btn {
@@ -46,4 +48,11 @@ span {
 
 .block {
     width: calc(100% - 4px);
+}
+
+#errorMessage {
+    margin-bottom: 5px;
+    font-size: 16px;   
+	font-style: "Calibri";
+    color: red;
 }

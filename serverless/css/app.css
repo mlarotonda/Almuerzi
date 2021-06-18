@@ -6,6 +6,7 @@
     padding: 15px;    
     padding-bottom: 30px;
     font-family: "Calibri";
+    box-shadow: 0.5px 0.5px 0.5px 1px rgba(0 ,0, 0, 0.3);
 }
 
 body {
