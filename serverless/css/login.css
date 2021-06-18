@@ -1,0 +1,49 @@
+.login-form p {
+    margin-bottom: 5px;
+    font-size: 14px;   
+	font-style: italic; 
+}
+.register-form {
+    margin-bottom: 5px;
+}
+
+form input {
+    width: calc(100% - 10px);	/* calc() permite calcular medidas en tiempo real */
+    height: 30px;
+    padding-left: 5px;
+    background-color: #dedede;
+    border: solid 0px;
+    border-radius: 4px;
+    color: #555;
+}
+
+.form-tittle {
+    text-align: center;
+    font-size: 24px;
+}
+
+.btn {
+    background-color: #2a91bd;
+    color: #fff;
+    padding: 10px 15px;
+    border: solid 0px;
+    border-radius: 4px;
+    margin-top: 25px;
+    cursor: pointer;
+}
+
+span {
+    margin-bottom: 5px;
+    font-size: 16px;   
+	font-style: "Calibri"; 
+}
+
+#register {
+    background-color: rgb(15, 29, 68);
+    padding: 7px 10px;
+    margin-left: 10px;
+}
+
+.block {
+    width: calc(100% - 4px);
+}
