@@ -1,10 +1,7 @@
-.login-form #input-text {
+#input-text {
     margin-bottom: 5px;
     font-size: 14px;   
 	font-style: italic; 
-}
-.register-form {
-    margin-bottom: 5px;
 }
 
 form input {
@@ -34,10 +31,12 @@ form input {
     cursor: pointer;
 }
 
-span {
-    margin-bottom: 5px;
-    font-size: 16px;   
-	font-style: "Calibri"; 
+.block {
+    width: calc(100% - 4px);
+}
+
+#registrarse {
+    background-color: rgb(15, 29, 68);
 }
 
 #register {
@@ -46,8 +45,10 @@ span {
     margin-left: 10px;
 }
 
-.block {
-    width: calc(100% - 4px);
+span {
+    margin-bottom: 5px;
+    font-size: 16px;   
+	font-style: "Calibri"; 
 }
 
 #errorMessage {

@@ -174,7 +174,6 @@ const renderLogin = () => {
                     ruta = 'orders'
                     return respuesta.token
                 } else {
-                    console.log(respuesta.errorMessage)
                     document.getElementById('errorMessage').innerHTML = respuesta.errorMessage
                 }
             })

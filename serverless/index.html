@@ -30,10 +30,28 @@
                 </div>
             </form>
             <hr>
+            <div>
+                <span>No tenes cuenta? </span>
+                <button class="btn" id="register">Registrarse</button>
+            </div>
+        </div>
+    </template>
+
+    <template id="register-template">
+        <div class="form-main">
+            <p class="form-tittle">Registro - Almuerzi</p>
             <form id="register-form" class="register-form">
                 <div>
-                    <span>No tenes cuenta? </span>
-                    <button class="btn" id="register">Registrarse</button>
+                    <p id="input-text">Email</p>
+                    <input id="email" placeholder="Email" />
+                </div>
+                <div>
+                    <p id="input-text">Contraseña</p>
+                    <input type="password" id="password" placeholder="Contraseña" />
+                </div>
+                <div>
+                    <button class="btn block" id="registrarse">Registrarse</button>
+                    <p id="errorMessage"></p>
                 </div>
             </form>
         </div>
